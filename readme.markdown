@@ -15,7 +15,7 @@ npm install -g stream-handbook
 이제 `stream-handbook` 명령어가 생기게 될 것이고, 그 명령어는 이 readme 파일을 당신의 `$PAGER`로 열게 될 것입니다.
 아니면, 이 문서를 현재 보고있는 것 처럼 계속 읽을 수도 있습니다.
 
-# introduction
+# 소개
 
 ```
 "우리는 데이터를 다른 방법으로 다룰(massage) 필요가 있을때, 프로그램들을 정원의 호스--스크류 처럼 다른 세그먼트에 연결할 수 있는 방법이 있어야 한다. 이것은 IO가 하고 있는 방법이기도 하다."
@@ -27,7 +27,7 @@ npm install -g stream-handbook
 
 ***
 
-스트림은 [초기의 유닉스 시대](http://www.youtube.com/watch?v=tc4ROCJYbm0) 부터 우리에게 왔고,
+스트림은 [초기의 유닉스 시대](http://www.youtube.com/watch?v=tc4ROCJYbm0)부터 우리에게 왔고,
 [한 가지 일을 잘 수행하는](http://www.faqs.org/docs/artu/ch01s06.html) 작은 컴포넌트로 대형 시스템을 구성하는 믿을 수 있는 방법으로서 수십년동안 스스로를 입증했습니다.
 unix 에서, stream들은 shell에서 `|` 파이프에 의해 구현됩니다.
 node 에서는, 내장되어 있는 [stream 모듈](http://nodejs.org/docs/latest/api/stream.html)이 코어 라이브러리들에서 사용되며, 또한 사용자-영역 모듈에서도 사용될 수 있습니다.
@@ -1018,25 +1018,19 @@ $ node client.js
 beep:10 => BOOOOOOOOOOP
 ```
 
-그냥 동작합니다!™(It just works!™)
+그냥 됩니다!™(It just works!™)
 
-기본 개념은 객체에 함수를 넣고 스트림의 다른 쪽에서 함수를 호출하고 함수가 다른 함수에서 스텁되어 원래 함수가 있던 측면으로 왕복하는 것입니다. 처음. 가장 좋은 점은 함수를 인수로 스텁 된 함수에 전달할 때 해당 함수가 * 다른쪽에 스텁 아웃된다는 것입니다.
-
-함수 인수를 스터 빙하는이 접근 방식은 이제부터는 "거북이 모든 방법으로"갬윗으로 알려지게 될 것입니다. 함수의 반환 값은 무시되고 개체의 열거 가능한 속성, json 스타일 만 전송됩니다.
-
-기본 아이디어는 객체에 함수를 넣고 스트림의 다른쪽에서 그것을 호출하고 그 함수는 또 다른쪽에서 스텁되어 본래의 함수가 원래 있던곳으로 왕복하는 것입니다.
+기본 아이디어는 객체에 함수를 넣고 스트림의 다른쪽에서 그것을 호출하고 그 함수는 또 다른쪽에서 stubed out되어 본래의 함수가 원래 있던곳으로 왕복하는 것입니다.
 가장 좋은점은, 함수들을 인자로서 스텁된 함수에 전달할 때 그 함수들은 *다른*쪽에 스텁아웃 된다는 점입니다.
 
 함수 인자를 재귀적으로 스터빙 하는 이 방식은 이제부터 "turtles all the way down" 수법으로 알려질겁니다.
 어떤힌 함수들로부터의 반환값이든 모두 무시되고 객체들의 열거 가능한 속성들, json 스타일만 보내어질것입니다.
 
-그야말로 turtles all the way down 이지요!
+이게 turtles all the way down 이지요!
 
 ![turtles all the way](http://substack.net/images/all_the_way_down.png)
 
-dnode가 어떤 스트림을 통해 노드 나 브라우저에서 작동하기 때문에 어디서나 정의 된 함수를 호출하기 쉽고 특히 [mux-demux] (https://github.com/dominictarr/mux-demux)와 쌍을 이루어 rpc를 멀티플렉싱 할 때 유용합니다 일부 대량 데이터 스트림과 함께 제어 스트림.
-
-dnode가 node내에서나 브라우저상에서 어떤한 스트림을 통해서 작동하기 때문에, 어디서 정의된 함수든 호출하기가 쉬우며 특히 [mux-demux](https://github.com/dominictarr/mux-demux)와 쌍을 이루어서 어떤 대량의 데이터 스트림과 함께 컨트롤을 위한 rpc스트림을 멀티플렉싱 하는데에 유용합니다.
+dnode가 node내에서나 브라우저상에서 어떠한 스트림을 통해서든 작동하기 때문에, 어디서 정의된 함수든 호출하기가 쉬우며 특히 [mux-demux](https://github.com/dominictarr/mux-demux)와 쌍을 이루어서 어떤 대량의 데이터 스트림과 함께 컨트롤을 위한 rpc스트림을 멀티플렉싱 하는데에 유용합니다.
 
 ## [rpc-stream](https://github.com/dominictarr/rpc-stream)
 
@@ -1052,29 +1046,19 @@ dnode가 node내에서나 브라우저상에서 어떤한 스트림을 통해서
 
 # power combos
 
-## distributed partition-tolerant chat
+## 븐신 파티션-허용 채팅
 
-The [append-only](http://github.com/Raynos/append-only) module can give us a
-convenient append-only array on top of
-[scuttlebutt](https://github.com/dominictarr/scuttlebutt)
-which makes it really easy to write an eventually-consistent, distributed chat
-that can replicate with other nodes and survive network partitions.
+[append-only](http://github.com/Raynos/append-only) 모듈은 [scuttlebutt](https://github.com/dominictarr/scuttlebutt)상에 편리한 덧붙이기만 가능한 배열을 제공해줄 수 있는데, 이것은 다른 노드들과 복제를 수행하고 네트워크 파티션에서 생존할 수 있는 최종적 일관성(eventually-consistent: 일시적으로는 consistant하지 않을 수 있으나 일정 시간 후에는 consistant한)있는 분산 채팅을 아주 쉽게 만들 수 있게 해줍니다.
 
 TODO: the rest
 
-## roll your own socket.io
+## 당신만의 socket.io 를 굴려라 roll your own socket.io
 
-We can build a socket.io-style event emitter api over streams using some of the
-libraries mentioned earlier in this document.
+우리는 socket.io 스타일의 스트림들 사이에서의 이벤트 emitter api를 이 문서의 위에서 언급한 몇 가지 라이브러리들을 사용하여 만들 수 있습니다.
 
-First  we can use [shoe](http://github.com/substack/shoe)
-to create a new websocket handler server-side and
-[emit-stream](https://github.com/substack/emit-stream)
-to turn an event emitter into a stream that emits objects.
-The object stream can then be fed into
-[JSONStream](https://github.com/dominictarr/JSONStream)
-to serialize the objects and from there the serialized stream can be piped into
-the remote browser.
+먼저 우리는 [shoe](http://github.com/substack/shoe)를 사용하여 새로운 웹소켓 핸들러 서버를 만들 수 있고,
+[emit-stream](https://github.com/substack/emit-stream)을 사용하여 한 스트림을 이벤트 emitter로 바꾸어 객체를 emit하도록 할 수 있습니다.
+그 객체 스트림은 그 이후 [JSONStream](https://github.com/dominictarr/JSONStream)로 공급되어 그 객체들을 직렬화(serialize)할 수 있고, 거기로부터 직렬화된 스트림은 원격 브라우저로 파이프될 수도 있습니다.
 
 ``` js
 var EventEmitter = require('events').EventEmitter;
@@ -1092,8 +1076,7 @@ var sock = shoe(function (stream) {
 });
 ```
 
-Inside the shoe callback we can emit events to the `ev` function.  Here we'll
-just emit different kinds of events on intervals:
+위에서의 shoe 콜백 내에서 우리는 `ev` 함수로 이벤트들을 emit할 수 있습니다. 여기서 우리는 단순히 특정 시간마다 다른 종류의 이벤트들을 emit할 것입니다:
 
 ``` js
 var intervals = [];
@@ -1111,7 +1094,7 @@ stream.on('end', function () {
 });
 ```
 
-Finally the shoe instance just needs to be bound to an http server:
+마지막으로 shoe 인스턴스는 한 http 서버에 바인드 될 필요가 있습니다:
 
 ``` js
 var http = require('http');
@@ -1121,9 +1104,8 @@ server.listen(8080);
 sock.install(server, '/sock');
 ```
 
-Meanwhile on the browser side of things just parse the json shoe stream and pass
-the resulting object stream to `eventStream()`. `eventStream()` just returns an
-event emitter that emits the server-side events:
+한편 브라우저측에서는 json shoe 스트림을 parse하고 그 결과인 객체를 `eventStream()`으로 전달합니다.
+`eventStream()`은 단순히 서버측에서의 이벤트를 emit하는 이벤트 emitter를 반환합니다:
 
 ``` js
 var shoe = require('shoe');
@@ -1147,33 +1129,20 @@ ev.on('upper', function (msg) {
 });
 ```
 
-Use [browserify](https://github.com/substack/node-browserify) to build this
-browser source code so that you can `require()` all these nifty modules
-browser-side:
+[browserify](https://github.com/substack/node-browserify)를 사용하여 이러한 브라우저 소스코드를 만들어 이러한 모든 멋진 모듈들을 브라우저 측에서 `require()` 할 수 있도록 해보세요:
 
 ```
 $ browserify main.js -o bundle.js
 ```
 
-Then drop a `<script src="/bundle.js"></script>` into some html and open it up
-in a browser to see server-side events streamed through to the browser side of
-things.
+그런 다음, `<script src="/bundle.js"></script>`을 어떤 html안에 넣고 브라우저에서 열면 서버측의 이벤트들이 브라우저측으로 스트림되는것을 확인해보세요.
 
-With this streaming approach you can rely more on tiny reusable components that
-only need to know how to talk streams. Instead of routing messages through a
-global event system socket.io-style, you can focus more on breaking up your
-application into tinier units of functionality that can do exactly one thing
-well.
+이러한 스트리밍 접근을 이용하여 스트림들을 이야기하는 방법만 알면 되는 작은 재사용한 컴포넌트들에 더욱 의존할 수 있습니다.
+전역 이벤트 시스템 socket.io-style을 통해 메시지들의 경로를 정하는 대신, 당신의 어플리케이션을 더 작은 기능의 단위로 쪼개고 그것들이 하나의 일만 잘 할 수 있도록 하는데에 더욱 집중할 수 있습니다.
 
-For instance you can trivially swap out JSONStream in this example for
-[stream-serializer](https://github.com/dominictarr/stream-serializer)
-to get a different take on serialization with a different set of tradeoffs.
-You could bolt layers over top of shoe to handle
-[reconnections](https://github.com/dominictarr/reconnect) or heartbeats
-using simple streaming interfaces.
-You could even add a stream into the chain to use namespaced events with
-[eventemitter2](https://npmjs.org/package/eventemitter2) instead of the
-EventEmitter in core.
+예를들어 이 예제에서의 JSONStream을 단순히 [stream-serializer](https://github.com/dominictarr/stream-serializer)로 바꾸면 다른 트레이드오프들을 사용한 다른 직렬화를 수행할 수 있습니다.
+간단한 스트리밍 인터페이스를 사용하여 [reconnections](https://github.com/dominictarr/reconnect) 또는 heartbeat를 처리하기 위해 shoe의 꼭대기에 레이어를 볼트로 고정할 수도 있습니다.
+코어안에 있는 EventEmitter 대신에 [eventemitter2](https://npmjs.org/package/eventemitter2)를 사용하여 한 스트림을 연쇠에 추가하여 네임스페이스를 사용하는 이벤트들을 사용할 수도 있습니다.
 
 If you want some different streams that act in different ways it would likewise
 be pretty simple to run the shoe stream in this example through mux-demux to
