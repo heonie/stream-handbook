@@ -18,7 +18,7 @@ npm install -g stream-handbook
 # introduction
 
 ```
-"우리는 데이터를 다른 방법으로 다룰(massage) 필요가 있을때, 프로그램들을 정원의 호스--스크류 처럼 다른 segment에 연결할 수 있는 방법이 있어야 한다. 이것은 IO가 하고 있는 방법이기도 하다."
+"우리는 데이터를 다른 방법으로 다룰(massage) 필요가 있을때, 프로그램들을 정원의 호스--스크류 처럼 다른 세그먼트에 연결할 수 있는 방법이 있어야 한다. 이것은 IO가 하고 있는 방법이기도 하다."
 ```
 
 [Doug McIlroy. October 11, 1964](http://cm.bell-labs.com/who/dmr/mdmpipe.html)
@@ -27,42 +27,26 @@ npm install -g stream-handbook
 
 ***
 
-Streams come to us from the
-[earliest days of unix](http://www.youtube.com/watch?v=tc4ROCJYbm0)
-and have proven themselves over the decades as a dependable way to compose large
-systems out of small components that
-[do one thing well](http://www.faqs.org/docs/artu/ch01s06.html).
-unix 에서, stream들은 shell에서 `|` 파이프에 의해 구현된다.
-node 에서는, 거기에 내장되어 있는
-[stream module](http://nodejs.org/docs/latest/api/stream.html)
-이 코어 라이브러리들에서 사용되고 또한 사용자-영역 모듈에서도 사용될 수 있다.
-unix와 비슷하게, node의 stream 모듈의 주요 composition 연산자는 `.pipe()` 라고 불리고 있고, 
-Similar to unix, the node stream module's primary composition operator is called
-`.pipe()` and you get a backpressure mechanism for free to throttle writes for
-slow consumers.
+스트림은 [초기의 유닉스 시대](http://www.youtube.com/watch?v=tc4ROCJYbm0) 부터 우리에게 왔고,
+[한 가지 일을 잘 수행하는](http://www.faqs.org/docs/artu/ch01s06.html) 작은 컴포넌트로 대형 시스템을 구성하는 믿을 수 있는 방법으로서 수십년동안 스스로를 입증했습니다.
+unix 에서, stream들은 shell에서 `|` 파이프에 의해 구현됩니다.
+node 에서는, 내장되어 있는 [stream 모듈](http://nodejs.org/docs/latest/api/stream.html)이 코어 라이브러리들에서 사용되며, 또한 사용자-영역 모듈에서도 사용될 수 있습니다.
+unix와 비슷하게, node의 stream 모듈의 주요 composition 연산자는 `.pipe()` 라고 불리고 있고, 느리게 데이터를 소비하는 소비자를 위해 쓰기를 조절하는 배압(backpressure) 매커니즘을 곧바로 사용할 수 있습니다.
 
-Streams can help to
-[separate your concerns](http://www.c2.com/cgi/wiki?SeparationOfConcerns)
-because they restrict the implementation surface area into a consistent
-interface that can be
-[reused](http://www.faqs.org/docs/artu/ch01s06.html#id2877537).
-You can then plug the output of one stream to the input of another and
-[use libraries](http://npmjs.org) that operate abstractly on streams to
-institute higher-level flow control.
+스트림은 [관심거리를 분리](http://www.c2.com/cgi/wiki?SeparationOfConcerns)하는데에 도움이 되는데, 그들이 구현영역을 [재사용](http://www.faqs.org/docs/artu/ch01s06.html#id2877537) 가능하도록 일관된 인터페이스로 제한하기 때문입니다.
+그런 다음, 한 스트림의 출력을 다른 스트림의 입력으로 연결하고 스트림들에 대해 추상적으로 동작하는 [라이브러리를 사용](http://npmjs.org)하여 상위레벨의 흐름제어를 시작할 수 있습니다.
 
-Stream들은 [small-program design](https://michaelochurch.wordpress.com/2012/08/15/what-is-spaghetti-code/)와 [unix philosophy](http://www.faqs.org/docs/artu/ch01s06.html)의 중요한 컴포넌트이지만, 생각해볼만한 많은 다른 중요한 abstraction들이 있다.
-Just remember that [technical debt](http://c2.com/cgi/wiki?TechnicalDebt)
-is the enemy and to seek the best abstractions for the problem at hand.
+Stream들은 [작은-프로그램 디자인](https://michaelochurch.wordpress.com/2012/08/15/what-is-spaghetti-code/)과 [유닉스 철학](http://www.faqs.org/docs/artu/ch01s06.html)의 중요한 컴포넌트이지만, 생각해볼만한 많은 다른 중요한 추상개념들이 있습니다.
+[기술적 빚](http://c2.com/cgi/wiki?TechnicalDebt)은 적이라는 점을 기억하고, 맞닥뜨린 문제에 대한 최고의 추상화를 추구하십시오.
 
 ![brian kernighan](http://substack.net/images/kernighan.png)
 
 ***
 
-# 왜 streams를 써야만 하는가?
+# 왜 stream을 써야만 하는가?
 
-node의 I/O는 비동기이다, so interacting with the disk and network involves
-passing callbacks to functions. You might be tempted to write code that serves
-up a file from disk like this:
+node의 I/O는 비동기이기 때문에, 디스크와 네트워크와 (데이터를) 주고 받는것은 함수에 콜백을 전달하는것을 포함하게 됩니다.
+당신은 다음과 같이 디스크로부터 파일을 제공하는 코드를 작성해야 할 수도 있습니다:
 
 ``` js
 var http = require('http');
@@ -81,7 +65,7 @@ server.listen(8000);
 
 사용자들은 당신의 서버 메모리에 파일 전체가 버퍼되기를 기다리고 나서야 컨텐츠 받기가 시작될 수 있기 때문에 사용자 경험 또한 나빠집니다.
 
-운좋게도 `(req, res)` 인자 둘 모두가 streams 이기 때문에, `fs.readFile()` 대신 `fs.createReadStream()`를 사용함으로서 이것을 훨씬 좋게 만들 수 있습니다:
+운좋게도 `(req, res)` 인자 둘 모두가 stream 이기 때문에, `fs.readFile()` 대신 `fs.createReadStream()`를 사용함으로서 이것을 훨씬 좋게 만들 수 있습니다:
 
 ``` js
 var http = require('http');
@@ -94,10 +78,10 @@ var server = http.createServer(function (req, res) {
 server.listen(8000);
 ```
 
-여기서 `.pipe()`는 `fs.createReadStream()` 으로부터 `'data'` 와 `'end'` 이벤트를 listening 합니다.
-이 코드는 깔끔할 뿐만 아니라, 이제 `data.txt` 는 디스크로부터 수신될 때 즉시 한번에 한 chunk씩 클라이언트들에게 기록되어집니다.
+여기서 `.pipe()`는 `fs.createReadStream()` 으로부터 `'data'` 와 `'end'` 이벤트를 리스닝 합니다.
+이 코드는 깔끔할 뿐만 아니라, 이제 `data.txt` 는 디스크로부터 수신될 때 즉시 한번에 한 덩러리(chunk)씩 클라이언트들에게 기록되어집니다.
 
-`.pipe()`를 사용하는 것은 다른 잇점도 있습니다. 이를테면, backpressure를 자동으로 핸들링 해서 node가 클라이언트가 정말 느리거나 연결 지연이 클 때 chunk들을 불필요하게 버퍼하지 않도록 합니다.
+`.pipe()`를 사용하는 것은 다른 잇점도 있습니다. 이를테면, backpressure를 자동으로 핸들링 해서 node가 클라이언트가 정말 느리거나 연결 지연이 클 때 덩어리들을 불필요하게 버퍼하지 않도록 합니다.
 
 압축을 원하나요? 그를 위한 스트리밍 모듈도 있습니다!
 
@@ -113,9 +97,9 @@ var server = http.createServer(function (req, res) {
 server.listen(8000);
 ```
 
-이제 우리 파일은 gzip이나 deflate를 지원하는 브라우저를 위해서 압축되었습니다! 우리는 그저 [oppressor](https://github.com/substack/oppressor)가 모든 content-encoding 들을 다루도록 둘 수 있습니다.
+이제 우리 파일은 gzip이나 deflate를 지원하는 브라우저를 위해서 압축되었습니다! 우리는 그저 [oppressor](https://github.com/substack/oppressor)가 모든 컨텐트-인코딩 들을 다루도록 둘 수 있게 되었습니다.
 
-당신이 stream api를 배우고 나면, 데이터를 스트리밍을 지원하지 않는 커스텀 API들을 통해 어떻게 푸시할지 기억해야 하는 대신에 이러한 스트리밍 모듈들을 레고 블럭이나 정원의 호스들 처럼 한데 물릴 수 있습니다.
+당신이 stream api를 배우고 나면, 데이터를 스트리밍을 지원하지 않는 커스텀 API들을 통해 어떻게 푸시할지 기억해야 하는 대신, 이러한 스트리밍 모듈들을 레고 블럭이나 정원의 호스들 처럼 한데 물릴 수 있습니다.
 
 스트림은 node로 프로그래밍 하는것을 간단하고 우아하고 조립 가능하게(composable) 만들어 줍니다.
 
@@ -125,9 +109,9 @@ server.listen(8000);
 
 ## pipe
 
-여러 종류의 스트림들이 모두 `.pipe()`를 입력을 출력과 pair하는데 사용합니다.
+여러 종류의 스트림들이 모두 `.pipe()`를 입력을 출력과 짝짓는데 사용합니다.
 
-단순히 `.pipe()` 는 readable 소스 streams인 `src` 를 받아서 출력을 목적지 쓰기 가능한 스트림 `dst`에 연결하는 함수입니다:
+단순히 `.pipe()` 는 readable 소스 streams인 `src` 를 받아서 출력을 쓰기 가능한 목적지 스트림 `dst`에 연결하는 함수입니다:
 
 ```
 src.pipe(dst)
