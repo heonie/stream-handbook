@@ -1144,22 +1144,16 @@ $ browserify main.js -o bundle.js
 간단한 스트리밍 인터페이스를 사용하여 [reconnections](https://github.com/dominictarr/reconnect) 또는 heartbeat를 처리하기 위해 shoe의 꼭대기에 레이어를 볼트로 고정할 수도 있습니다.
 코어안에 있는 EventEmitter 대신에 [eventemitter2](https://npmjs.org/package/eventemitter2)를 사용하여 한 스트림을 연쇠에 추가하여 네임스페이스를 사용하는 이벤트들을 사용할 수도 있습니다.
 
-If you want some different streams that act in different ways it would likewise
-be pretty simple to run the shoe stream in this example through mux-demux to
-create separate channels for each different kind of stream that you need.
+다른 방식으로 동작하는 다른 스트림을 원한다면 이 예제에서의 shoe 스트림을 mux-demux를 통해 실행하여 필요한 각각의 다른 종류의 스트림에 대해 별도의 채널들을 생성하면 간단할 것입니다.
 
-As the requirements of your system evolve over time, you can swap out each of
-these streaming pieces as necessary without as many of the all-or-nothing risks
-that more opinionated framework approaches necessarily entail.
+당신의 시스템 요구사양이 점점 발전함에 따라 이러한 스트리밍 조각들 각각을 필요에 따라 "모아니면 도"의 위험 없이 바꿀 수 있으며, 그러한 위험은 더욱 독단적인 프레임웍 접근법에서 필연적으로 수반됩니다.
 
-## html streams for the browser and the server
+## 브라우저와 서버를 위한 html 스트림
 
-We can use some streaming modules to reuse the same html rendering logic for the
-client and the server! This approach is indexable, SEO-friendly, and gives us
-realtime updates.
+클라이언트와 서버에서 동일한 html 렌더링 로직을 재사용하기 위해 어떤 스트리밍 모듈들을 사용할 수도 있습니다.
+이러한 접근법은 색인 가능하고, SEO(검색엔진 최적화)친화적이며, 실시간 업데이트를 가능하게 합니다.
 
-Our renderer takes lines of json as input and returns html strings as its
-output. Text, the universal interface!
+우리의 렌더러는 몇줄의 json을 입력으로 받고, 출력으로서 html 문자열을 반환합니다. 문자열은 만능 인터페이스이지요!
 
 render.js:
 
@@ -1182,13 +1176,11 @@ module.exports = function () {
 };
 ```
 
-We can use [brfs](http://github.com/substack/brfs) to inline the
-`fs.readFileSync()` call for browser code
-and [hyperglue](https://github.com/substack/hyperglue) to update html based on
-css selectors. You don't need to use hyperglue necessarily here; anything that
-can return a string with html in it will work.
+[brfs](http://github.com/substack/brfs)를 사용하여 브라우저 코드에서 `fs.readFileSync()` 호출을 인라인 할 수 있고,
+[hyperglue](https://github.com/substack/hyperglue)를 사용하여 css 셀렉터 기반으로 html을 업데이트 할 수 있습니다.
+여기서 hyperglue 를 반드시 사용할 필요는 없습니다; 그 언에서 html 문자열을 반환할 수 있다면 어떠한 것이든 동작할것입니다.
 
-The `row.html` used is just a really simple stub thing:
+여기서는 아주 간단히 `row.html`을 만들어 넣었습니다:
 
 row.html:
 
@@ -1199,10 +1191,9 @@ row.html:
 </div>
 ```
 
-The server will just use [slice-file](https://github.com/substack/slice-file) to
-keep everything simple. [slice-file](https://github.com/substack/slice-file) is
-little more than a glorified `tail/tail -f` api but the interfaces map well to
-databases with regular results plus a changes feed like couchdb.
+서버는 그저 단순히 [slice-file](https://github.com/substack/slice-file)을 사용하였고,
+[slice-file](https://github.com/substack/slice-file)은 찬사받는 `tail/tail -f` api 보다 약간 낫지만,
+그것의 인터페이스는 정규 결과들과 couchdb와 같은 변경 피드를 가진 데이터베이스에 잘 매핑되어 있습니다.
 
 server.js:
 
@@ -1236,14 +1227,11 @@ var sock = shoe(function (stream) {
 sock.install(server, '/sock');
 ```
 
-The first part of the server handles the `/` route and streams the last 5 lines
-from `data.txt` into the `#rows` div.
+서버의 첫 번째 부분은 `/` 라우트를 핸들링하며 `data.txt`로부터 마지막 5줄을 `#rows` div에 스트림합니다.
 
-The second part of the server handles realtime updates to `#rows` using
-[shoe](http://github.com/substack/shoe), a simple streaming websocket polyfill.
+서버의 두 번째 부분은 [shoe](http://github.com/substack/shoe)를 이용하여 `#rows`의 업데이트를 실시간으로 핸들링하는 간단한 스트리밍 웹소켓 polyfill 입니다.
 
-Next we can write some simple browser code to populate the realtime updates
-from [shoe](http://github.com/substack/shoe) into the `#rows` div:
+다음으로 우리는 [shoe](http://github.com/substack/shoe)로부터 실시간 업데이트를 가져와 `#rows` div에 넣는 간단한 브라우저 코드를 작성할 수 있습니다:
 
 ``` js
 var through = require('through');
@@ -1258,35 +1246,32 @@ stream.pipe(render()).pipe(through(function (html) {
 }));
 ```
 
-Just compile with [browserify](http://browserify.org) and
-[brfs](http://github.com/substack/brfs):
+[browserify](http://browserify.org) 와 [brfs](http://github.com/substack/brfs)로 컴파일 하면:
 
 ```
 $ browserify -t brfs browser.js > static/bundle.js
 ```
 
-And that's it! Now we can populate `data.txt` with some silly data:
+됐습니다! 이제 `data.txt`를 약간의 바보같은 데이터로 채워봅니다:
 
 ```
 $ echo '{"who":"substack","message":"beep boop."}' >> data.txt
 $ echo '{"who":"zoltar","message":"COWER PUNY HUMANS"}' >> data.txt
 ```
 
-then spin up the server:
+그다음 서버를 돌리고:
 
 ```
 $ node server.js
 ```
 
-then navigate to `localhost:8000` where we will see our content. If we add some
-more content:
+그 다음 우리 컨텐트를 확인하기 위해 `localhost:8000`로 이동합니다. 약간의 컨텐트를 추가하면:
 
 ```
 $ echo '{"who":"substack","message":"oh hello."}' >> data.txt
 $ echo '{"who":"zoltar","message":"HEAR ME!"}' >> data.txt
 ```
 
-then the page updates automatically with the realtime updates, hooray!
+그러면 페이지가 실시간 업데이트를 이용하여 자동적으로 업데이트 될 것입니다. 만세!
 
-We're now using exactly the same rendering logic on both the client and the
-server to serve up SEO-friendly, indexable realtime content. Hooray!
+이제 우리는 클라이언트와 서버 모두에서 정확히 동일한 로직을 사용하여 SEO 친화적이고 색인 가능한 실시간 컨텐트를 서비스하게 되었습니다. 만세!
