@@ -1,6 +1,6 @@
 # stream-handbook
 
-이 문서는 [streams](http://nodejs.org/docs/latest/api/stream.html)을 이용한 [node.js](http://nodejs.org/) 프로그램 방법을 다룹니다.
+이 문서는 [stream](http://nodejs.org/docs/latest/api/stream.html)을 이용한 [node.js](http://nodejs.org/) 프로그램 방법을 다룹니다.
 
 [![cc-by-3.0](http://i.creativecommons.org/l/by/3.0/80x15.png)](http://creativecommons.org/licenses/by/3.0/)
 
@@ -18,7 +18,8 @@ npm install -g stream-handbook
 # 소개
 
 ```
-"우리는 데이터를 다른 방법으로 다룰(massage) 필요가 있을때, 프로그램들을 정원의 호스--스크류 처럼 다른 세그먼트에 연결할 수 있는 방법이 있어야 한다. 이것은 IO가 하고 있는 방법이기도 하다."
+"우리는 데이터를 다른 방식으로 변경(massage data)할 필요가 있을때, 프로그램들을 정원의 호스--스크류 처럼
+다른 세그먼트에 연결할 수 있는 방법이 있어야 합니다. 이것은 IO가 하고있는 방법이기도 합니다."
 ```
 
 [Doug McIlroy. October 11, 1964](http://cm.bell-labs.com/who/dmr/mdmpipe.html)
@@ -27,17 +28,17 @@ npm install -g stream-handbook
 
 ***
 
-스트림은 [초기의 유닉스 시대](http://www.youtube.com/watch?v=tc4ROCJYbm0)부터 우리에게 왔고,
-[한 가지 일을 잘 수행하는](http://www.faqs.org/docs/artu/ch01s06.html) 작은 컴포넌트로 대형 시스템을 구성하는 믿을 수 있는 방법으로서 수십년동안 스스로를 입증했습니다.
-unix 에서, stream들은 shell에서 `|` 파이프에 의해 구현됩니다.
-node 에서는, 내장되어 있는 [stream 모듈](http://nodejs.org/docs/latest/api/stream.html)이 코어 라이브러리들에서 사용되며, 또한 사용자-영역 모듈에서도 사용될 수 있습니다.
-unix와 비슷하게, node의 stream 모듈의 주요 composition 연산자는 `.pipe()` 라고 불리고 있고, 느리게 데이터를 소비하는 소비자를 위해 쓰기를 조절하는 배압(backpressure) 매커니즘을 곧바로 사용할 수 있습니다.
+Stream은 [초기의 유닉스 시대](http://www.youtube.com/watch?v=tc4ROCJYbm0)부터 있어왔고,
+[한 가지 일을 잘 수행하는](http://www.faqs.org/docs/artu/ch01s06.html) 작은 컴포넌트를 이용하여 대형 시스템을 구성하는 신뢰할 수 있는 방법으로서 수십년동안 스스로를 입증해왔습니다.
+unix 에서, Stream은 shell에서 `|` 파이프에 의해 구현됩니다.
+node 에서는, 내장되어 있는 [stream 모듈](http://nodejs.org/docs/latest/api/stream.html)이 코어 라이브러리들에서 사용되며, 또한 사용자-영역의 모듈에서도 사용될 수 있습니다.
+unix와 비슷하게, node stream 모듈의 주요 결합 연산자는 `.pipe()` 라고 불리고 있고, 느리게 데이터를 소비하는 소비자를 위해 쓰기를 조절하는 배압(backpressure) 매커니즘을 제공합니다.
 
-스트림은 [관심거리를 분리](http://www.c2.com/cgi/wiki?SeparationOfConcerns)하는데에 도움이 되는데, 그들이 구현영역을 [재사용](http://www.faqs.org/docs/artu/ch01s06.html#id2877537) 가능하도록 일관된 인터페이스로 제한하기 때문입니다.
+Stream은 [관심거리를 분리](http://www.c2.com/cgi/wiki?SeparationOfConcerns)하는데에 도움이 되는데, 그들이 구현영역을 [재사용](http://www.faqs.org/docs/artu/ch01s06.html#id2877537) 가능하도록 일관된 인터페이스로 제한하기 때문입니다.
 그런 다음, 한 스트림의 출력을 다른 스트림의 입력으로 연결하고 스트림들에 대해 추상적으로 동작하는 [라이브러리를 사용](http://npmjs.org)하여 상위레벨의 흐름제어를 시작할 수 있습니다.
 
-Stream들은 [작은-프로그램 디자인](https://michaelochurch.wordpress.com/2012/08/15/what-is-spaghetti-code/)과 [유닉스 철학](http://www.faqs.org/docs/artu/ch01s06.html)의 중요한 컴포넌트이지만, 생각해볼만한 많은 다른 중요한 추상개념들이 있습니다.
-[기술적 빚](http://c2.com/cgi/wiki?TechnicalDebt)은 적이라는 점을 기억하고, 맞닥뜨린 문제에 대한 최고의 추상화를 추구하십시오.
+Stream은 [작은-프로그램 디자인](https://michaelochurch.wordpress.com/2012/08/15/what-is-spaghetti-code/)과 [유닉스 철학](http://www.faqs.org/docs/artu/ch01s06.html)의 중요한 컴포넌트이지만, 생각해볼만한 많은 다른 중요한 추상개념들이 있습니다.
+[기술적 부채](http://c2.com/cgi/wiki?TechnicalDebt)은 적이라는 점을 기억하고, 맞닥뜨린 문제에 대한 최고의 추상화를 추구하십시오.
 
 ![brian kernighan](http://substack.net/images/kernighan.png)
 
@@ -45,7 +46,7 @@ Stream들은 [작은-프로그램 디자인](https://michaelochurch.wordpress.co
 
 # 왜 stream을 써야만 하는가?
 
-node의 I/O는 비동기이기 때문에, 디스크와 네트워크와 (데이터를) 주고 받는것은 함수에 콜백을 전달하는것을 포함하게 됩니다.
+node의 I/O는 비동기이기 때문에, 디스크 그리고 네트워크와 상호작용하려면 함수에 콜백을 전달하는것을 포함하게 됩니다.
 당신은 다음과 같이 디스크로부터 파일을 제공하는 코드를 작성해야 할 수도 있습니다:
 
 ``` js
@@ -60,8 +61,8 @@ var server = http.createServer(function (req, res) {
 server.listen(8000);
 ```
 
-이 코드는 잘 동작하지만 부피가 크고, 모든 요청에 대해 클라이언트에 결과를 쓰기 전에 `data.txt` 파일 전체를 메모리에 버퍼링합니다.
-만약 `data.txt`가 매우 크다면, 특히 느린 연결을 사용하는 사용자들의 경우, 동시에 많은 사용자들에 serve하게 됨에 따라 당신의 프로그램은 많은 메모리를 잡아먹기 시작할 수 있습니다.
+이 코드는 잘 동작하지만, 부피가 크고 모든 요청에 대해 클라이언트에 결과를 쓰기 전에 `data.txt` 파일 전체를 메모리에 버퍼링합니다.
+만약 `data.txt`가 매우 크다면, 특히 느린 연결을 사용하는 사용자들의 경우, 동시에 많은 사용자들에 제공하게 됨에 따라 당신의 프로그램은 많은 메모리를 잡아먹기 시작할 수 있습니다.
 
 사용자들은 당신의 서버 메모리에 파일 전체가 버퍼되기를 기다리고 나서야 컨텐츠 받기가 시작될 수 있기 때문에 사용자 경험 또한 나빠집니다.
 
@@ -79,9 +80,9 @@ server.listen(8000);
 ```
 
 여기서 `.pipe()`는 `fs.createReadStream()` 으로부터 `'data'` 와 `'end'` 이벤트를 리스닝 합니다.
-이 코드는 깔끔할 뿐만 아니라, 이제 `data.txt` 는 디스크로부터 수신될 때 즉시 한번에 한 덩러리(chunk)씩 클라이언트들에게 기록되어집니다.
+이 코드는 깔끔할 뿐만 아니라, 이제 `data.txt` 는 디스크로부터 수신될 때 즉시 한번에 한 덩어리(chunk)씩 클라이언트들에게 기록되어집니다.
 
-`.pipe()`를 사용하는 것은 다른 잇점도 있습니다. 이를테면, backpressure를 자동으로 핸들링 해서 node가 클라이언트가 정말 느리거나 연결 지연이 클 때 덩어리들을 불필요하게 버퍼하지 않도록 합니다.
+`.pipe()`를 사용하는 것은 다른 잇점도 있습니다. 이를테면, node가 클라이언트가 정말 느리거나 연결 지연이 클 때 배압(backpressure)을 자동으로 핸들링 해서 덩어리들을 불필요하게 버퍼하지 않도록 합니다.
 
 압축을 원하나요? 그를 위한 스트리밍 모듈도 있습니다!
 
@@ -97,11 +98,11 @@ var server = http.createServer(function (req, res) {
 server.listen(8000);
 ```
 
-이제 우리 파일은 gzip이나 deflate를 지원하는 브라우저를 위해서 압축되었습니다! 우리는 그저 [oppressor](https://github.com/substack/oppressor)가 모든 컨텐트-인코딩 들을 다루도록 둘 수 있게 되었습니다.
+이제 gzip이나 deflate를 지원하는 브라우저에 대해서는 우리의 파일이 압축될겁니다! 우리는 그저 [oppressor](https://github.com/substack/oppressor)가 모든 content-encoding 들을 다루도록 둘 수 있게 되었습니다.
 
-당신이 stream api를 배우고 나면, 데이터를 스트리밍을 지원하지 않는 커스텀 API들을 통해 어떻게 푸시할지 기억해야 하는 대신, 이러한 스트리밍 모듈들을 레고 블럭이나 정원의 호스들 처럼 한데 물릴 수 있습니다.
+당신이 stream api를 배우고 나면, 스트리밍을 지원하지 않는 커스텀 API들을 통해 데이터를 어떻게 푸시할지 기억해야 하는 대신, 이러한 스트리밍 모듈들을 레고 블럭이나 정원의 호스들 처럼 한데 물릴 수 있습니다.
 
-스트림은 node로 프로그래밍 하는것을 간단하고 우아하고 조립 가능하게(composable) 만들어 줍니다.
+stream은 node로 프로그래밍 하는것을 간단하고 우아하고 조립 가능하게(composable) 만들어 줍니다.
 
 # 기본
 
@@ -109,9 +110,9 @@ server.listen(8000);
 
 ## pipe
 
-여러 종류의 스트림들이 모두 `.pipe()`를 입력을 출력과 짝짓는데 사용합니다.
+여러 종류의 스트림들이 모두 입력을 출력과 짝짓는데 `.pipe()`를 사용합니다.
 
-단순히 `.pipe()` 는 readable 소스 streams인 `src` 를 받아서 출력을 쓰기 가능한 목적지 스트림 `dst`에 연결하는 함수입니다:
+`.pipe()` 는 단순히 readable 소스 streams인 `src` 를 받아, 그 출력을 쓰기 가능한 목적지 스트림 `dst`에 연결하는 함수입니다:
 
 ```
 src.pipe(dst)
@@ -138,17 +139,17 @@ a | b | c | d
 
 shell 대신에 node에서 한다는것만 빼고요!
 
-## readable streams
+## readable 스트림
 
-Readable stream은 데이터를 생산하고, `.pipe()`를 호출함으로서 그 데이터는 writable, transform 또는 duplex 스트림에 의해 소비되어집니다(fed):
+Readable 스트림은 데이터를 생산하고, `.pipe()`를 호출함으로서 그 데이터는 writable, transform 또는 duplex 스트림에 의해 소비되어집니다(fed):
 
 ``` js
 readableStream.pipe(dst)
 ```
 
-### readable stream 생성
+### readable 스트림 생성
 
-readable stream을 만들어봅시다!
+readable 스트림을 만들어봅시다!
 
 ``` js
 var Readable = require('stream').Readable;
@@ -168,11 +169,11 @@ beep boop
 
 `rs.push(null)` 은 소비자에게 `rs`가 데이터 출력을 마쳤다고 알려줍니다.
 
-여기서 `process.stdout`에 piping하기 전에 readable stream인 `rs`에 컨텐트를 푸시했지만 여전히 전체 메시지가 출력된것을 보세요.
+여기서 `process.stdout`에 piping하기 전에 readable 스트림인 `rs`에 컨텐트를 푸시했지만 여전히 전체 메시지가 출력된것을 보세요.
 
-이것은 readable stream에 `.push()` 할 때, 푸시한 chunk들이 그것들을 consumer가 읽을 준비가 될 때 까지 버퍼되기 때문입니다.
+이것은 readable 스트림에 `.push()` 할 때, 푸시한 chunk들이 그것들을 consumer가 읽을 준비가 될 때 까지 버퍼되기 때문입니다.
 
-하지만, 만약 데이터들을 모두 버퍼링하는것을 피하고 consumer가 그것을 요청할 때만 데이터를 생성할 수 있다면 많은 상황에서 더 좋을것입니다.
+하지만, 만약 데이터들을 모두 버퍼링하는것을 피하고 consumer가 그것을 요청할 때만 데이터를 생성할 수 있다면 여러가지 상황에서 더 좋을것입니다.
 
 
 `._read` 함수를 정의함으로서 chunk를 요청이 있을때만 푸시할 수 있습니다:
@@ -197,11 +198,11 @@ abcdefghijklmnopqrstuvwxyz
 
 여기서 우리는 `'a'` 에서 `'z'` 까지의 문자들을 consumer가 그것들을 읽을 준비가 되었을때만 푸시합니다.
 
-`_read` 함수는 또한 provisional한 `size` 파라미터를 그 첫번째 인자로 받아들이고, 이것은 consumer가 몇 byte의 데이터를 읽고자 하는지를 지정합니다. 하지만 당신의 readable stream은 원한다면 `size`를 무시할 수 있습니다.
+`_read` 함수는 또한 잠정적인 `size` 파라미터를 그 첫번째 인자로 받아들이고, 이것은 consumer가 몇 byte의 데이터를 읽고자 하는지를 지정합니다. 하지만 당신의 readable 스트림은 원한다면 `size`를 무시할 수 있습니다.
 
-Readable stream을 상속받기 위해서 `util.inherits()` 를 사용할 수도 있음에 유의하세요. 하지만 그러한 접근은 이해하기 쉬운 예제에는 잘 어울리지 않습니다.
+readable 스트림을 상속받기 위해서 `util.inherits()` 를 사용할 수도 있음에 유의하세요. 하지만 그러한 접근은 이해하기 쉬운 예제에는 잘 어울리지 않습니다.
 
-우리의 `_read` 함수가 consumer가 요청했을 때만 호출됨을 보이기 위해, 우리의 readable stream 코드에 약간의 지연을 추가하도록 수정해보겠습니다:
+우리의 `_read` 함수가 consumer가 요청했을 때만 호출됨을 보이기 위해, 우리의 readable 스트림 코드에 약간의 지연을 추가하도록 수정해보겠습니다:
 
 ```js
 var Readable = require('stream').Readable;
@@ -233,19 +234,19 @@ abcde
 _read() called 5 times
 ```
 
-setTimeout는 운영 체제가 관련한 신호를 보내서 파이프를 닫을 때까지 시간을 필요로 하기 때문에 필요합니다.
+setTimeout는 운영 체제가 관련한 신호를 보내서 파이프를 닫을 때까지 시간을 요하기 때문에 필요합니다.
 
 또한, `process.stdout.on('error', fn)` 핸들러는 `head`가 더이상 우리 프로그램의 출력에 관심이 없을때 운영 체제가 SIGPIPE 를 우리 프로세스로 보내면 EPIPE 에러가 `process.stdout`에서 발생될 것이기 때문에 필요합니다.
 
-외부의 운영 체제 파이프들과의 인터페이스를 위해서는 이러한 추가적인 복잡한것들이 필요하지만, 전체 시간 동안 node 스트림들과 직접 인터페이스할때는 자동으로 이루어집니다.
+외부의 운영 체제 파이프들과의 인터페이스를 위해서는 이러한 추가적인 복잡한것들이 필요하지만, 항상 node 스트림들과만 직접 인터페이스할때는 자동으로 이루어집니다.
 
-문자열이나 버퍼 대신 임의의 값을 푸시하는 readable stream을 만들고 싶다면, readable stream 을 생성할 때 `Readable({ objectMode: true })` 와 같이 생성해야 함에 유의하세요.
+문자열이나 버퍼 대신 임의의 값을 푸시하는 readable 스트림을 만들고 싶다면, readable 스트림 을 생성할 때 `Readable({ objectMode: true })` 와 같이 생성해야 함에 유의하세요.
 
 
-### readable stream 으로부터 읽기(consuming)
+### readable 스트림 으로부터 읽기(consuming)
 
-대부분의 경우, readable stream을 다른 종류의 스트림이나 [through](https://npmjs.org/package/through)
-또는 [concat-stream](https://npmjs.org/package/concat-stream) 와 같은 모듈로 생성한 스트림에 pipe하는것이 훨씬 쉽지만, 가끔은 readable stream을 직접 consume하는것이 유용할 수 있습니다.
+대부분의 경우, readable 스트림을 다른 종류의 스트림이나 [through](https://npmjs.org/package/through)
+또는 [concat-stream](https://npmjs.org/package/concat-stream) 과 같은 모듈로 생성한 스트림에 pipe하는것이 훨씬 쉽지만, 가끔은 readable 스트림을 직접 consume하는것이 유용할 수 있습니다.
 
 ``` js
 process.stdin.on('readable', function () {
@@ -348,7 +349,7 @@ $ tail -n +50000 /usr/share/dict/american-english | head -n10 | node lines.js
 
 ## writable 스트림
 
-writable 스트림은 `.pipe()`를 통해 입력을 넣는것이 아닌 받아들일 수 있는 스트림입니다. stream is a stream you can `.pipe()` to but not from:
+writable 스트림은 `.pipe()`의 출발점이 아니라, 대상이 되는 스트림입니다:
 
 ``` js
 src.pipe(writableStream)
@@ -375,12 +376,12 @@ $ (echo beep; sleep 1; echo boop) | node write0.js
 <Buffer 62 6f 6f 70 0a>
 ```
 
-첫 번째 인자인 `chunk`는 생산자에 의해 쓰여진 데이터입니다.
+첫 번째 인자인 `chunk`는 생산자에 의해 write된 데이터입니다.
 
-두 번째 인자인 `enc`는 문자열 인코딩을 나타내는 문자열인데, `opts.decodeString`가 `false`이고 당신이 문자열을 write했을때만 사용합니다.
+두 번째 인자인 `enc`는 문자열 인코딩을 나타내는 문자열인데, `opts.decodeString`가 `false`이고 문자열을 write했을때만 사용합니다.
 
 세 번째 인자인 `next(err)`는 데이터의 consumer에게 데이터를 더 write할 수 있다고 알려주는 콜백입니다.
-에러 객체인 `err`를 optional하게 넘길수도 있는데, 이는 스트림 인스턴스에 `'error'` 이벤트를 발생시킵니다.
+에러 객체인 `err`를 선택적으로 넘길수도 있는데, 이는 스트림 인스턴스에 `'error'` 이벤트를 발생시킵니다.
 
 만약 pipe를 통해 데이터를 공급받고있는 readable 스트림이 문자열들을 write하면, 당신이 `Writable({ decodeStrings: false })`을 이용하여 당신의 writable 스트림을 만들지 않는 한 그 문자열들은 `Buffer`들로 변환 될 것입니다.
 
@@ -394,7 +395,7 @@ writable 스트림에 기록하기 위해서는, 당신이 기록하기를 원�
 process.stdout.write('beep boop\n');
 ```
 
-목적지인 writable 스트림에 기록이 끝났다고 알려주기 위해서는, `.end()`를 호출하세요.
+목적지인 writable 스트림에 write가 끝났다고 알려주기 위해서는, `.end()`를 호출하세요.
 `.end(data)`와 같이 종료 전에 기록할 `data`를 줄 수도 있습니다:
 
 ``` js
@@ -1046,7 +1047,7 @@ dnode가 node내에서나 브라우저상에서 어떠한 스트림을 통해서
 
 # power combos
 
-## 븐신 파티션-허용 채팅
+## 분산 파티션-허용 채팅
 
 [append-only](http://github.com/Raynos/append-only) 모듈은 [scuttlebutt](https://github.com/dominictarr/scuttlebutt)상에 편리한 덧붙이기만 가능한 배열을 제공해줄 수 있는데, 이것은 다른 노드들과 복제를 수행하고 네트워크 파티션에서 생존할 수 있는 최종적 일관성(eventually-consistent: 일시적으로는 consistant하지 않을 수 있으나 일정 시간 후에는 consistant한)있는 분산 채팅을 아주 쉽게 만들 수 있게 해줍니다.
 
@@ -1274,4 +1275,4 @@ $ echo '{"who":"zoltar","message":"HEAR ME!"}' >> data.txt
 
 그러면 페이지가 실시간 업데이트를 이용하여 자동적으로 업데이트 될 것입니다. 만세!
 
-이제 우리는 클라이언트와 서버 모두에서 정확히 동일한 로직을 사용하여 SEO 친화적이고 색인 가능한 실시간 컨텐트를 서비스하게 되었습니다. 만세!
+이제 우리는 클라이언트와 서버 모두에서 정확히 동일한 로직을 사용하여 SEO 친화적으로 색인 가능한 실시간 컨텐트를 서비스하게 되었습니다. 만세!
